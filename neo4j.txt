@@ -1,0 +1,86 @@
+NEO4J
+
+// Create a node
+CREATE (p:Person {name: 'Alice', age: 30})
+
+// Create multiple nodes and relationships
+CREATE (a:Person {name: 'Bob'}), (b:Person {name: 'Charlie'}),
+       (a)-[:FRIENDS_WITH]->(b)
+
+// Get all Person nodes
+MATCH (p:Person) RETURN p
+
+// Get people with a certain property
+MATCH (p:Person {name: 'Alice'}) RETURN p
+
+// Get relationships
+MATCH (a:Person)-[r:FRIENDS_WITH]->(b:Person)
+RETURN a.name, type(r), b.name
+
+// Add or update a property
+MATCH (p:Person {name: 'Alice'})
+SET p.age = 31
+
+// Rename a property
+MATCH (p:Person) 
+SET p.newName = p.name
+REMOVE p.name
+
+// Delete a relationship
+MATCH (a:Person)-[r:FRIENDS_WITH]->(b:Person)
+DELETE r
+
+// Delete a node (only if no relationships)
+MATCH (p:Person {name: 'Bob'})
+DELETE p
+
+// Delete node and all relationships
+MATCH (p:Person {name: 'Charlie'})
+DETACH DELETE p
+
+
+CREATE (:Student {name: 'John Doe', student_id: 'S1001', age: 21}),
+       (:Student {name: 'Jane Smith', student_id: 'S1002', age: 22})
+
+CREATE (:Course {name: 'Math 101', course_id: 'C101'}),
+       (:Course {name: 'History 201', course_id: 'C102'})
+
+MATCH (s:Student) RETURN s
+
+Get all courses a specific student is enrolled in
+MATCH (s:Student {student_id: 'S1001'})-[:ENROLLED_IN]->(c:Course)
+RETURN s.name, c.name
+
+Get students and the semester they enrolled in a course
+MATCH (s:Student)-[r:ENROLLED_IN]->(c:Course)
+RETURN s.name, c.name, r.semester
+
+Count how many students are enrolled in each course
+MATCH (s:Student)-[:ENROLLED_IN]->(c:Course)
+RETURN c.name, COUNT(s) AS enrolled_students
+
+Update a student's age
+MATCH (s:Student {student_id: 'S1002'})
+SET s.age = 23
+
+Add a new property (like email) to a student
+MATCH (s:Student {student_id: 'S1001'})
+SET s.email = 'john.doe@example.com'
+
+
+Update a relationship property
+MATCH (s:Student {student_id: 'S1001'})-[r:ENROLLED_IN]->(c:Course {course_id: 'C101'})
+SET r.semester = 'Fall 2025'
+
+Delete a student (only if no relationships)
+MATCH (s:Student {student_id: 'S1002'})
+DELETE s
+
+Delete a student and their relationships
+MATCH (s:Student {student_id: 'S1001'})
+DETACH DELETE 
+
+Delete the ENROLLED_IN relationship between a student and a course
+MATCH (s:Student {student_id: 'S1001'})-[r:ENROLLED_IN]->(c:Course {course_id: 'C101'})
+DELETE r
+
