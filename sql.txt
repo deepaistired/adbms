@@ -1,0 +1,263 @@
+->CREATE DATABASE ONE;
+->USE ONE;
+->show tables;
+->create table salesman( salesman_id int primary key,name varchar(50),city varchar(50),comission decimal(4,2));
+->insert into salesman values (5001,'James Hoog','New York',0.15);
+->insert into salesman values (5003,'Lauson Hen',NULL,0.12);
+->CREATE TABLE customer (
+    customer_id INT PRIMARY KEY,
+    customer_name VARCHAR(100),
+    city VARCHAR(100),
+    grade INT,
+    salesman_id INT,
+    FOREIGN KEY (salesman_id) REFERENCES salesman(salesman_id)
+);
+->delete from customer where customer_id='3001';
+->insert into customer (customer_id,customer_name,city,grade,salesman_id) values (3001,'Brad Guzan','London',NULL,NULL);
+->insert into customer (customer_id,customer_name,city,grade,salesman_id) values (3004,'Fabian Johns','Paris',300,5006);
+->insert into customer (customer_id,customer_name,city,grade,salesman_id) values (3006,'Brad Davis','New York',200,5001);
+CREATE TABLE orders (
+    ->     order_no INT,
+    ->     purch_amt DECIMAL(8, 3),
+    ->     order_date DATE,
+    ->     customer_id INT,  -- Declare customer_id column
+    ->     salesman_id INT,  -- Declare salesman_id column
+    ->     FOREIGN KEY (customer_id) REFERENCES customer(customer_id),
+    ->     FOREIGN KEY (salesman_id) REFERENCES salesman(salesman_id)
+    -> );
+->INSERT INTO orders (order_no, purch_amt, order_date, customer_id, salesman_id) 
+VALUES (7001, 150.5, '2016-10-05', 3005, 5002);
+->SELECT DISTINCT salesman_id
+FROM orders;
+->select name,comission from salesman;
+ INSERT INTO orders (order_no, purch_amt, order_date, customer_id, salesman_id) values (7005,2400.6,'2016-07-27',3001,5001);
+-> select name,city from salesman where city = 'Paris';
+->select customer_id,customer_name,city,salesman_id from customer where grade > 200;
+->SELECT *
+FROM nobel
+WHERE (subject = 'Physics' AND year = 1970)
+   OR (subject = 'Economics' AND year = 1971);
+->SELECT *
+FROM nobel
+WHERE year = 1970
+  AND subject NOT IN ('Physiology', 'Economics');
+->SELECT *
+FROM nobel
+WHERE subject NOT LIKE 'P%'
+ORDER BY year DESC, winner ASC;
+-> select order_no,order_date,purch_amt from orders where salesman_id not in (5001);
+->SELECT name, price
+FROM items
+WHERE price = (SELECT MIN(price) FROM items);
+->SELECT customer_name
+FROM customer
+WHERE city = 'New York' OR grade <= 100;
+->SELECT customer_name
+FROM customer
+WHERE city = 'New York' OR NOT grade > 100;
+->SELECT *
+FROM salesman
+WHERE commission BETWEEN 0.12 AND 0.14;
+->SELECT *
+FROM customer
+WHERE customer_name LIKE '%n';
+->SELECT * 
+FROM salesman 
+WHERE name LIKE 'n__i%';
+->SELECT *
+FROM customer
+WHERE grade IS NULL;
+->SELECT SUM(purch_amt) AS total_amt
+FROM orders;
+-> select distinct count(salesman_id) as salesman from customer;
+->SELECT city, MAX(grade) AS highestg
+FROM customer
+GROUP BY city;
+-> select max(purch_amt) as maxamt,customer_id from orders group by customer_id;
+->SELECT customer_id, order_date, MAX(purch_amt) AS highest_purch_amt
+FROM orders
+GROUP BY customer_id, order_date;
+
+->SELECT salesman_id, MAX(purch_amt) AS highest_purch_amt
+FROM orders
+WHERE order_date = '2012-08-17'
+GROUP BY salesman_id;
+->SELECT customer_id, order_date, MAX(purch_amt) AS highest_purch_amt
+FROM orders
+GROUP BY customer_id, order_date
+HAVING MAX(purch_amt) > 2000;
+->SELECT COUNT(*) AS total_orders
+FROM orders
+WHERE order_date = '2012-08-17';
+->CREATE TABLE INSTRUCTORS (
+    empno INT PRIMARY KEY,
+    name VARCHAR(50),
+    `rank` VARCHAR(20),
+    roomno VARCHAR(10),
+    telno VARCHAR(15)
+);
+->CREATE TABLE GRADES (
+    stno INT,
+    empno INT,
+    cno INT,
+    sem VARCHAR(10),
+    year INT,
+    grade INT,
+    PRIMARY KEY (stno),
+    FOREIGN KEY (stno) REFERENCES students(stno),
+    FOREIGN KEY (empno) REFERENCES INSTRUCTORS(empno),
+    FOREIGN KEY (cno) REFERENCES COURSES(cno)
+);
+->INSERT INTO COURSES (cno, cname, cr, cap)
+VALUES
+    (1, 'Math101', 3, 30),
+    (2, 'CS210', 4, 25),
+    (3, 'Physics101', 3, 20);
+->SELECT stno FROM students;
+->INSERT INTO students (stno, name) VALUES
+(1, 'Student 1'),
+(2, 'Student 2'),
+(3, 'Student 3');
+->INSERT INTO GRADES (stno, empno, cno, sem, year, grade)
+VALUES
+    (1, 101, 1, 'Fall', 2021, 85),
+    (2, 102, 2, 'Fall', 2021, 92),
+    (3, 103, 3, 'Fall', 2021, 78);
+->SELECT empno FROM instructors;
+->INSERT INTO instructors (empno, name, rank, roomno, telno)
+VALUES
+    (101, 'Instructor 1', 'Professor', '101A', '123-456-7890'),
+    (102, 'Instructor 2', 'Associate Professor', '102B', '123-456-7891'),
+    (103, 'Instructor 3', 'Lecturer', '103C', '123-456-7892');
+->INSERT INTO GRADES (stno, empno, cno, sem, year, grade)
+VALUES
+    (1, 101, 1, 'Fall', 2021, 85),
+    (2, 102, 2, 'Fall', 2021, 92),
+    (3, 103, 3, 'Fall', 2021, 78);
+->INSERT INTO instructors (empno, name, `rank`, roomno, telno)
+VALUES
+    (101, 'Alice Smith', 'Professor', 'R101', '1234567890'),
+    (102, 'Bob Johnson', 'Associate Prof', 'R102', '1234567891'),
+    (103, 'Carol Lee', 'Lecturer', 'R103', '1234567892');
+->CREATE TABLE ACTOR (
+    ACT_ID INT(3) NOT NULL,
+    ACT_NAME VARCHAR(20),
+    ACT_GENDER CHAR(1),
+    PRIMARY KEY (ACT_ID)
+);
+
+CREATE TABLE DIRECTOR (
+    DIR_ID INT(3) NOT NULL,
+    DIR_NAME VARCHAR(20),
+    DIR_PHONE BIGINT(10),  -- Use BIGINT for 10-digit numbers
+    PRIMARY KEY (DIR_ID)
+);
+
+CREATE TABLE MOVIES (
+    MOV_ID INT(4) NOT NULL,
+    MOV_TITLE VARCHAR(25),
+    MOV_YEAR INT(4),
+    MOV_LANG VARCHAR(12),
+    DIR_ID INT(3),
+    PRIMARY KEY (MOV_ID),
+    FOREIGN KEY (DIR_ID) REFERENCES DIRECTOR (DIR_ID)
+);
+->CREATE TABLE MOVIE_CAST (
+    ACT_ID INT(3),
+    MOV_ID INT(4),
+    ROLE VARCHAR(10),
+    PRIMARY KEY (ACT_ID, MOV_ID),
+    FOREIGN KEY (ACT_ID) REFERENCES ACTOR (ACT_ID),
+    FOREIGN KEY (MOV_ID) REFERENCES MOVIES (MOV_ID)
+);
+
+->CREATE TABLE RATING (
+    MOV_ID INT(4),
+    REV_STARS VARCHAR(25),
+    PRIMARY KEY (MOV_ID),
+    FOREIGN KEY (MOV_ID) REFERENCES MOVIES (MOV_ID)
+);
+
+-- ACTOR Table Inserts
+INSERT INTO ACTOR VALUES (301, 'ANUSHKA', 'F');
+INSERT INTO ACTOR VALUES (302, 'PRABHAS', 'M');
+INSERT INTO ACTOR VALUES (303, 'PUNITH', 'M');
+INSERT INTO ACTOR VALUES (304, 'JERMY', 'M');
+
+-- DIRECTOR Table Inserts
+INSERT INTO DIRECTOR VALUES (60, 'RAJAMOULI', 8751611001);
+INSERT INTO DIRECTOR VALUES (61, 'HITCHCOCK', 7766138911);
+INSERT INTO DIRECTOR VALUES (62, 'FARAN', 9986776531);
+INSERT INTO DIRECTOR VALUES (63, 'STEVEN SPIELBERG', 8989776530);
+
+-- MOVIES Table Inserts
+INSERT INTO MOVIES VALUES (1001, 'BAHUBALI-2', 2017, 'TELUGU', 60);
+INSERT INTO MOVIES VALUES (1002, 'BAHUBALI-1', 2015, 'TELUGU', 60);
+INSERT INTO MOVIES VALUES (1003, 'AKASH', 2008, 'KANNADA', 61);
+INSERT INTO MOVIES VALUES (1004, 'WAR HORSE', 2011, 'ENGLISH', 63);
+
+-- MOVIE_CAST Table Inserts
+INSERT INTO MOVIE_CAST VALUES (301, 1002, 'HEROINE');
+INSERT INTO MOVIE_CAST VALUES (301, 1001, 'HEROINE');
+INSERT INTO MOVIE_CAST VALUES (303, 1003, 'HERO');
+INSERT INTO MOVIE_CAST VALUES (303, 1002, 'GUEST');
+INSERT INTO MOVIE_CAST VALUES (304, 1004, 'HERO');
+
+-- RATING Table Inserts
+INSERT INTO RATING VALUES (1001, '4');
+INSERT INTO RATING VALUES (1002, '2');
+INSERT INTO RATING VALUES (1003, '5');
+INSERT INTO RATING VALUES (1004, '4');
+->INSERT INTO Persons (P_Id, LastName, FirstName, Address, City, Contribution)  
+VALUES  
+(1, 'Bindra', 'Jaspreet', '5B, Gomti Nagar', 'Lucknow', 3500.50), 
+(2, 'Rana', 'Monica', '21 A, Bandra', 'Mumbai', 2768.00), 
+(3, 'Singh', 'Jatinder', '8, Punjabi Bagh', 'Delhi', 2000.50); 
+->SELECT P_Id, LEFT(FirstName, 3) AS First3Chars
+FROM Persons;
+->SELECT LastName, Contribution, ROUND(Contribution / 10, 2) AS thirdcolumn
+FROM Persons;
+->SELECT FirstName, LastName 
+FROM Persons 
+WHERE FirstName LIKE '_at%' OR FirstName LIKE '__at%';
+-> select FirstName,LastName from Persons where Contribution <= (select min(Contribution) from Persons);
+->select FirstName,LastName from Persons where Contribution = (select max(Contribution) as maxcontri from Persons);
+->select LastName,FirstName from Persons where FirstName like "%a";
+-> select city,sum(Contribution) as totalcontri from Persons group by city having totalcontri > 3000;
+->SELECT Student.Student_Name, Instructor.Instructor_Name
+FROM Student
+JOIN Instructor ON Student.Instructor_Id = Instructor.Instructor_Id;
+->select Student_Name from Student where Instructor_ID IS NULL;
+->SELECT Student.Student_Name, Instructor.Instructor_Name, Instructor.Specialization
+FROM Student
+JOIN Instructor ON Student.Instructor_Id = Instructor.Instructor_Id
+WHERE Instructor.Specialization LIKE '%Computer%'
+   OR Instructor.Specialization LIKE '%CS%'
+   OR Instructor.Specialization LIKE '%DBMS%'
+   OR Instructor.Specialization LIKE '%IT%';
+-> Select Employee.Emp_Name,Department.Dept_Name from Employee join Department on Employee.Dept_Id=Department.Dept_Id;
+->select Emp_Name from Employee where Dept_Id IS NULL;
+-> Select Employee.Emp_Name from Employee join Department on Employee.Dept_Id=Department.Dept_Id where Department.Dept_Name='IT';
+->SELECT Customer_Id, Order_Id, Order_Amount
+FROM Ordering
+ORDER BY Customer_Id;
+->SELECT Customer_Id, GROUP_CONCAT(Order_Id) AS Orders_Placed
+FROM Ordering
+GROUP BY Customer_Id;
+->SELECT c.Customer_Name
+FROM Customer c
+LEFT JOIN Ordering o ON c.Customer_Id = o.Customer_Id
+WHERE o.Order_Id IS NULL;
+-> select  c.Customer_Name from Customers c left join Ordering o on c.Customer_Id=o.Customer_Id where o.Order_Id IS NULL;
+->SELECT c.Customer_Name
+FROM Customer c
+LEFT JOIN Ordering o ON c.Customer_Id = o.Customer_Id
+WHERE o.Order_Id IS NULL;
+->UPDATE Customer
+SET Customer_Name = 'Alex John', City = 'Boston'
+WHERE Customer_Id = 102;
+->ALTER TABLE Customer
+ADD Email VARCHAR(100);
+->ALTER TABLE Customer
+MODIFY Email VARCHAR(150);
+->
