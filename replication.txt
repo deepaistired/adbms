@@ -1,0 +1,56 @@
+open power ise shell after checking the bin directory for mongod
+
+1)mongod --port=2717 --dbpath="C:\data\primary" --replSet="test-replica-set"
+
+2)new ise
+ mongod --port=2727 --dbpath="C:\data\primary" --replSet="test-replica-set"
+3) new se 
+mongod --port=2737 --dbpath="C:\data\primary" --replSet="test-replica-set"
+
+4)new ise,  mongosh --host="localhost:2717"
+
+5)localhost 2717 - rs.initiate()
+
+6)same host rs.add({"localhost:2727"}) or rs.add("localhost:2727")
+
+7)same host rs.add("localhost:2737")
+
+8)rs.status()
+
+9)new ise, mongosh --host="localhost:2727"
+
+10)new ise,mongosh --host="localhost:2737"
+
+11)new instance in primary server : show dbs
+the same databases should be reflected in other localhosts
+
+12)open primary server instance and insert records
+use practical;
+
+db.users.insertMany([{name:"Deepa",roll_no:20,age:21},{name:"Abhinav",roll_no:32,age:20},{name:"Pooja",roll_no:13,age:22}]); 
+
+13)db.users.find()
+
+14)go to secondary server 1 and sever 2 and use practical (same database) and db.users.find()
+
+15)CRUD :
+primary : db.users.insertOne({name:"Shivani",roll_no:19,age:24});
+
+16)in secondary
+db.users.find({name:"Shivani"});
+
+17)UpdateOne
+
+primary : db.users.updateOne(
+  { name: "Deepa" },
+  { $set: { age: 25 } }
+);
+18)db.users.find() in secondary1 and secondary2
+19)db.users.updateMany({age:{$lt:25}},{$set:{status:"young"}}); primary
+20)primary 
+db.users.deleteOne({name:"Abhinav"});
+21)primary
+db.users.deleteMany({age:{$gt:25}});
+
+
+
