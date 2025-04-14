@@ -1,0 +1,79 @@
+1)create following folders
+data/
+primary
+secondary1
+secondary2
+shard1
+shard2
+shard3
+
+1)in three ise powershells
+
+mongod --configsvr --port 1030 --replSet Practical7repl --dbpath "C:\data\primary"
+
+mongod --configsvr --port=1040 --replSet="Practical7repl" --dbpath="C:\data\secondary1"
+
+mongod --configsvr --port=1040 --replSet="Practical7repl" --dbpath="C:\data\secondary1"
+
+2)connect to anyone of them and then initiate a replica set
+mongosh --port="localhost:1030"
+or  mongosh --port 1030
+
+3)rs.initiate({_id:"Practical7repl",configsvr:true,members:[{_id:0,host:"localhost:1030"},{_id:1,host:"localhost:1040"},{_id:2,host:"localhost:1050"}]});
+or
+rs.initiate({
+  _id: "Practical7repl",
+  configsvr: true,
+  members: [
+    { _id: 0, host: "localhost:1030" },
+    { _id: 1, host: "localhost:1040" },
+    { _id: 2, host: "localhost:1050" }
+  ]
+});
+
+4)Creating 3 shard instances :
+mongod --shardsvr --port 1130 --dbpath "C:\data\shard1" --replSet "ShardReplicaSet"
+
+mongod --shardsvr --port=1140 --dbpath="C:\data\shard2" --replSet="ShardReplicaSet"
+
+mongod --shardsvr --port=1150 --dbpath="C:\data\shard3" --replSet="ShardReplicaSet"
+
+5)connect to anyone of them and then initiate a shard set
+mongosh --port="localhost:1130"
+or  mongosh --port 1130
+
+3)
+rs.initiate({
+  _id: "ShardReplicaSet",
+  members: [
+    { _id: 0, host: "localhost:1130" },
+    { _id: 1, host: "localhost:1140" },
+    { _id: 2, host: "localhost:1150" }
+  ]
+});
+
+6)new ise, Initialize a Query Router which is a mongos process. 
+mongos --port=1210 --configdb="Prac7Repl/localhost:1030,localhost:1040,localhost:1050" 
+
+7)new,ise ,Now, Connect Shards and Query Router (mongos) 
+mongosh --host="localhost:1210"
+
+8)sh.addShard("Prac7Shard/localhost:1130,localhost:1140,localhost:1150") (same ise as above)
+
+9)sh.shardCollection("practice.students", { "enroll": "hashed" }) on 1210
+
+10)use practice on 1210
+db.students.insertMany([ 
+{ _id: 1, name: "Alice", enroll: 1001 }, 
+{ _id: 2, name: "Bob", enroll: 2005 }, 
+{ _id: 3, name: "Charlie", enroll: 1503 }, 
+{ _id: 4, name: "David", enroll: 2507 }, 
+{ _id: 5, name: "Eve", enroll: 3002 }, 
+{ _id: 6, name: "Uno", enroll: 3501 } 
+])
+
+11)sh.status() on 1210
+
+12)db.students.find({ enroll: 2005 })
+
+13)db.students.find({ enroll: { $gt: 1000, $lt: 3000 } }) 
